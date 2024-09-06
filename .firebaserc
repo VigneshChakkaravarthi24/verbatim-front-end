@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "default": "verbatim-front-end",
+    "production": "verbatim-pilot-test"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
