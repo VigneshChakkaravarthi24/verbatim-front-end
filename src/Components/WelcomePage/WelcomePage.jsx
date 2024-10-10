@@ -20,6 +20,11 @@ const WelcomePage = () => {
 const navigate=useNavigate()
   const loaderData=useLoaderData()
 
+  if(loaderData && loaderData.data && loaderData.data.errorMessage)
+  {
+    return <NavigatePage buttonText="Back to login" message={loaderData.data.errorMessage} title="Oops!!"  goToPath="/"></NavigatePage>
+
+  }
   if((!loaderData)||(!loaderData.data.message))
   {
     
@@ -40,7 +45,7 @@ const navigate=useNavigate()
           </ul>
           <button
             className={sharedClasses.button}
-            onClick={()=>{navigate("/audio-test")}}
+            onClick={()=>{navigate("/test-instructions")}}
           >
             Next
           </button>
@@ -56,17 +61,27 @@ export default WelcomePage;
 
 export async function loader(){
 
-  const token=sessionStorage.getItem("token")
-  let headers= {
-    'Authorization': `Bearer ${token}`
-}
-
-  const result = await axios.get(`${BASE_URL}/user/authenticate-loader`,{headers})
-  if(result.data.errorMessage)
+  try
   {
-    console.log("the result is",result)
-    return result
+    const token=sessionStorage.getItem("token")
+    let headers= {'Authorization': `Bearer ${token}`}
+    const result = await axios.get(`${BASE_URL}/user/authenticate-loader`,{headers})
+    if(result.data.errorMessage || result.data.message)
+        {
+            return result
+        }
+    else
+        {
+            throw new Response(JSON.stringify({message:"Unable to reach server", buttonText:"Go Home",title:"Server error",goToPath:"/"},{status:500}))
+        }
+
   }
-  return result
+  catch(error)
+  {
+    throw new Response(JSON.stringify({message:"Unable to reach server", buttonText:"Go Home",title:"Server error",goToPath:"/"},{status:500}))
+  }
+  
+
+
 
 }

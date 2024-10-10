@@ -1,21 +1,16 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: './', // Ensure paths are relative so Electron can load them correctly
-
+  base: process.env.NODE_ENV === 'production' ? './' : '/',  // Use relative paths in production
   server: {
-    host: '0.0.0.0', // Expose server on all network interfaces
-    port: 5173,      // Set your desired port
-    strictPort: true, // Ensure Vite uses the specified port
-    cors: true, // Enable CORS to allow requests from different origins
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: false,  // Allow fallback ports in development
+    cors: false,
   },
   build: {
-    outDir: 'dist', // Ensure this matches your Electron build configuration
-    rollupOptions: {
-      // Customize Rollup options if needed
-    },
-  },
+    outDir: 'dist',  // Ensure Electron loads the build files from 'dist'
+  }
 });

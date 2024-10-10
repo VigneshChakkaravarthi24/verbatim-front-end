@@ -1,5 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { RouterProvider,createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createHashRouter } from 'react-router-dom';
 import WelcomePage from './Components/WelcomePage/WelcomePage';
 import TestInstructionsPage from './Components/TestInstructions/TestInstructions';
 import LoginPage from './Components/LoginPage/LoginPage';
@@ -10,103 +9,88 @@ import WriteEssayPage from './Components/WriteEssay/WriteEssay';
 import SummaryPage from './Components/Summary/Summary';
 import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
 import InstructionsLayout from './Components/InstructionsLayout/InstructionsLayout';
-import { loader as WelcomeLoader } from './Components/WelcomePage/WelcomePage';
-import { loader as TestInstructionsLoader } from './Components/TestInstructions/TestInstructions';
+import ErrorPage from './Components/ErrorPage/ErrorPage';
 import EssayPage2 from './Components/EssayPage2/Essaypage2';
 import AudioPage2 from './Components/AudioPage2/AduioPage2';
 import NavigatePage from './Components/NavigatePage/NavigatePage';
-import {loader as AudioPageLoader} from './Components/AudioPage/AduioPage'
 import WriteEssayPage2 from './Components/WriteEssayPage2/WriteEssay';
+import { loader as WelcomeLoader } from './Components/WelcomePage/WelcomePage';
+import { loader as EssayLoader } from './Components/EssayPage/EssayPage';
 import { loader as AudioPageLoader2 } from './Components/AudioPage2/AduioPage2';
-// import Instructions from './Components/LoginPage/LoginPage';
-const router = createBrowserRouter([
+import { loader as EssayPage2Loader } from './Components/EssayPage2/Essaypage2';
+
+const router = createHashRouter([
   {
-    path:"/",
-    element:<LoginPage/>,
+    path: "/",
+    element: <LoginPage />,
   },
   {
-    element: <PrivateRoute element={<InstructionsLayout />} />, // Wrap Layout with PrivateRoute
+    element: <PrivateRoute element={<InstructionsLayout />} />,
     children: [
       {
         path: "/welcome",
         element: <WelcomePage />,
-        loader:WelcomeLoader,
-        errorElement:<NavigatePage buttonText="Back to login" message="An error occured in WelcomePage" title="Oops!!"  goToPath="/"></NavigatePage>
-      
+        loader: WelcomeLoader,
+        errorElement: <ErrorPage />
       },
       {
         path: "/audio-test",
-        element: <AudioTestPage />, 
-        loader:WelcomeLoader,
-        errorElement:<NavigatePage buttonText="Back to login" message="An error occured in Audio Test" title="Oops!!"  goToPath="/"></NavigatePage>
-
-
-        // Add this route
+        element: <AudioTestPage />,
+        loader: WelcomeLoader,
+        errorElement: <NavigatePage buttonText="Back to login" message="An error occurred in Audio Test" title="Oops!!" goToPath="/" />
       },
       {
-        path:"/test-instructions",
-        element:<TestInstructionsPage />,
-        loader:WelcomeLoader,
-        errorElement:<NavigatePage buttonText="Back to login" message="An error occured in Audio Test" title="Oops!!"  goToPath="/"></NavigatePage>
-
+        path: "/test-instructions",
+        element: <TestInstructionsPage />,
+        loader: WelcomeLoader,
+        errorElement: <NavigatePage buttonText="Back to login" message="An error occurred in Audio Test" title="Oops!!" goToPath="/" />
       },
     ]
   },
- {
-path:"/essay",
-element:<PrivateRoute element={<EssayPage/>}/>,
-loader:WelcomeLoader,
-
- },
   {
-    path:"/essay-audio",
-    element:<PrivateRoute element={<AudioPage/>}/>,
-    loader:AudioPageLoader
-
-
+    path: "/essay",
+    element: <PrivateRoute element={<EssayPage />} />,
+    loader: EssayLoader,
+    errorElement: <ErrorPage />
   },
   {
-    path:"/write-test",
-    // element:<WriteEssayPage/>
-    element:<PrivateRoute element={<WriteEssayPage/>}/>,
-
-
-  }
-  ,
-  {
-  path:"/summary",
-  element:<SummaryPage/>
+    path: "/essay-audio",
+    element: <PrivateRoute element={<AudioPage />} />,
+    loader: EssayLoader,
   },
   {
-    path:"/essay-2",
-    element:<PrivateRoute element={<EssayPage2/>}/>,
-    loader:TestInstructionsLoader
-    
-     },
-      {
-        path:"/essay-audio-2",
-        element:<PrivateRoute element={<AudioPage2/>}/>,
-        loader:AudioPageLoader2
-    
-    
-      },
-      {
-        path:"/write-test-2",
-        element:<PrivateRoute element={<WriteEssayPage2/>}/>,
-    
-    
-      }
-      ,
-      {
-      path:"/summary",
-      element:<SummaryPage/>
-      }
-])
+    path: "/write-test",
+    element: <PrivateRoute element={<WriteEssayPage />} />,
+    errorElement: <NavigatePage buttonText="Back to login" message="An error occurred in Write Test" title="Oops!!" goToPath="/" />
+  },
+  {
+    path: "/summary",
+    element: <SummaryPage />
+  },
+  {
+    path: "/essay-2",
+    element: <PrivateRoute element={<EssayPage2 />} />,
+    loader: EssayPage2Loader,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/essay-audio-2",
+    element: <PrivateRoute element={<AudioPage2 />} />,
+    loader: AudioPageLoader2
+  },
+  {
+    path: "/write-test-2",
+    element: <PrivateRoute element={<WriteEssayPage2 />} />,
+  },
+]);
+
 function App() {
 
-    return <RouterProvider router={router}/>;
-
   
+
+
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;

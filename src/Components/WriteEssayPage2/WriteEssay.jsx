@@ -37,7 +37,7 @@ const WriteEssayPage2 = () => {
           setEnded(result.data.ended);
         }
       } catch (error) {
-        navigate("/");
+        console.log(error)
       }
     };
 
@@ -66,8 +66,6 @@ const WriteEssayPage2 = () => {
   };
 
   const handleOnSubmit = async (text) => {
-    const result = window.confirm("Are you sure you want to submit the answer?");
-    if (result) {
       setSubmitting(true);
       try {
         await saveAnswer(text, true).then(() => navigate("/summary"));
@@ -75,7 +73,7 @@ const WriteEssayPage2 = () => {
       } finally {
         setSubmitting(false);
       }
-    }
+    
   };
 
   const handleSave = async (text) => {

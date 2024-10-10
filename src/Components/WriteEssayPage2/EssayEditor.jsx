@@ -1,7 +1,7 @@
 import React, { useState, useRef, forwardRef, useImperativeHandle } from "react";
 import { getVerbatim } from "./getVerbatim";
 
-const TextEditor = forwardRef(({ refText, onSave, onSubmit,userGroup }, ref) => {
+const TextEditor = forwardRef(({ refText, onSave, onSubmit, userGroup }, ref) => {
   const [editableText, setEditableText] = useState("");
   const editableContentRef = useRef(null);
   const lastWordCount = useRef(0);
@@ -22,13 +22,13 @@ const TextEditor = forwardRef(({ refText, onSave, onSubmit,userGroup }, ref) => 
 
   const shouldUpdateContent = (content) => {
     const currentWordCount = wordCount(content);
-    return currentWordCount % 2 === 0 && currentWordCount>0 && currentWordCount !== lastWordCount.current;
+    return currentWordCount % 2 === 0 && currentWordCount > 0 && currentWordCount !== lastWordCount.current;
   };
- 
+
   const onInput = () => {
     if (editableContentRef.current) {
       const content = editableContentRef.current.innerText;
-      
+
       if (shouldUpdateContent(content)) {
         updateContent(); // Call updateContent only if the word count condition is met
       }
@@ -40,7 +40,7 @@ const TextEditor = forwardRef(({ refText, onSave, onSubmit,userGroup }, ref) => 
     if (editableContentRef.current) {
       const element = editableContentRef.current;
       const content = element.innerText;
-      const updatedContent = getVerbatim(refText, content,userGroup);
+      const updatedContent = getVerbatim(refText, content, userGroup);
       console.log("The updated content is", updatedContent);
       const selection = window.getSelection();
       const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
@@ -96,6 +96,36 @@ const TextEditor = forwardRef(({ refText, onSave, onSubmit,userGroup }, ref) => 
     return null;
   };
 
+  const onPaste = (e) => {
+    e.preventDefault(); // Prevent pasting
+  };
+
+  const onCut = (e) => {
+    e.preventDefault(); // Prevent cutting
+  };
+
+  const onCopy = (e) => {
+    e.preventDefault(); // Prevent copying
+  };
+
+  const onKeyDown = (e) => {
+    // Prevent cut, copy, paste shortcuts (Ctrl + X, Ctrl + C, Ctrl + V)
+    if (e.ctrlKey && (e.key === 'x' || e.key === 'v' || e.key === 'c')) {
+      e.preventDefault();
+    }
+    // Optionally, prevent the context menu (right-click)
+    if (e.key === 'ContextMenu') {
+      e.preventDefault();
+    }
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevents the new line from being added
+    }
+  };
+
+  const onContextMenu = (e) => {
+    e.preventDefault(); // Prevent right-click context menu
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
@@ -119,6 +149,12 @@ const TextEditor = forwardRef(({ refText, onSave, onSubmit,userGroup }, ref) => 
         ref={editableContentRef}
         contentEditable="true"
         onInput={onInput}
+        onPaste={onPaste} // Disable paste
+        onCut={onCut} // Disable cut
+        onCopy={onCopy} // Disable copy
+        onKeyDown={onKeyDown} // Disable shortcuts
+        onContextMenu={onContextMenu} // Disable context menu
+        spellCheck="false" // Disable spellcheck
         style={{
           border: "1px solid #ccc",
           padding: "10px",
@@ -137,7 +173,6 @@ const TextEditor = forwardRef(({ refText, onSave, onSubmit,userGroup }, ref) => 
       </div>
     </div>
   );
-    
 });
 
 export default TextEditor;

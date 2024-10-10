@@ -12,7 +12,7 @@ const AudioPage2 = () => {
   const [audio, setAudio] = useState();
 
   const loaderData= useLoaderData()
-  console.log("the loader data is",loaderData) //Comment this later
+  console.log("The loader data is",loaderData)
   if(!loaderData)
   {
     return (
@@ -23,9 +23,14 @@ const AudioPage2 = () => {
             buttonText="Take me home"></NavigatePage>
         )    
   }
-  const isPlayed = (loaderData.isPlayed); //TO be used when isPlayed is there. 
-  const audioSource = loaderData.audio
-  const ended = loaderData.ended
+  if(loaderData.data.ended)
+    {
+      return <NavigatePage buttonText="Take me to question 2" message="You have submitted question 1 already. Go to question 2. " title="Question 1 submitted already"  goToPath="/essay-2"></NavigatePage>
+
+    }
+  const isPlayed = (loaderData.data.isPlayed); //TO be used when isPlayed is there. 
+  const audioSource = loaderData.data.question.audio
+  const ended = loaderData.data.ended
 
   if(ended)
   {
@@ -33,7 +38,7 @@ const AudioPage2 = () => {
   
       <NavigatePage title="Question 1 already submitted!"
             message="It seems that you have submitted question 1 already. If not please contanct admin."
-            goToPath="/summary"
+            goToPath="/essay-1"
             buttonText="End test"></NavigatePage>
         )
 
@@ -57,14 +62,4 @@ const AudioPage2 = () => {
 export default AudioPage2;
 
 
-export async function loader()
-{
-  const token = sessionStorage.getItem("token");
-const headers = {
-  Authorization: `Bearer ${token}`,
-};
 
-
-const result = await axios.get(`${BASE_URL}/user/get-audio/1`,{ headers });
-return result.data
-};

@@ -23,7 +23,11 @@ const TestInstructionsPage = () => {
   const navigate = useNavigate(); // Initialize useNavigate
 
   const loaderData=useLoaderData()
-
+  if(loaderData && loaderData.data && loaderData.data.errorMessage)
+    {
+      return <NavigatePage buttonText="Back to login" message={loaderData.data.errorMessage} title="Oops!!"  goToPath="/"></NavigatePage>
+  
+    }
   if((!loaderData)||(!loaderData.data.message))
     {
       
@@ -37,10 +41,8 @@ const TestInstructionsPage = () => {
 
 
   const handleOnClick = async () => {
-    const result = window.confirm("Are you sure you want to start writing your answer?");
-    if (result) {
       navigate("/essay")
-    }
+    
   };
 
   return (
@@ -81,13 +83,3 @@ const TestInstructionsPage = () => {
 
 export default TestInstructionsPage;
 
-export async function loader(){
-
-  const token=sessionStorage.getItem("token")
-  let headers= {
-    'Authorization': `Bearer ${token}`
-}
-
-  const result = await axios.get(`${BASE_URL}/user/get-questions`,{headers})
-  return result
-}

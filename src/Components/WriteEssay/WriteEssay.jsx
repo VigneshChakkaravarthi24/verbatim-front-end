@@ -7,10 +7,10 @@ import BASE_URL from '../../../localhost';
 import TextEditor from "./EssayEditor";
 import Timer from "./Timer";
 import NavigatePage from '../NavigatePage/NavigatePage';
+import { ClipLoader } from 'react-spinners'; // Add the spinner
 
 const WriteEssayPage = () => {
   const navigate = useNavigate();
-  const userGroup = sessionStorage.getItem('group')
   const editorRef = useRef(null); // Ref to access TextEditor methods
   const [timerDuration, setTimerDuration] = useState(null);
   const [essayContent, setEssayContent] = useState("loading...");
@@ -20,32 +20,38 @@ const WriteEssayPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [ended, setEnded] = useState(false);
   const [timerUpHandled, setTimerUpHandled] = useState(false); // Flag to track if the timer has already been handled
-
+  const [pageError,setPageError] = useState(false);
   useEffect(() => {
     const getQuestion = async () => {
       const token = sessionStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
       
       try {
-        const result = await axios.get(`${BASE_URL}/user/getQuestion1`, { headers });
-        if (result.data.question && result.data.prompt) {
-          console.log("the question result is",result)
-          setEssayContent(result.data.question);
-          setPrompt(result.data.prompt);
+        const result = await axios.get(`${BASE_URL}/user/get-question`, { headers });
+        if (result && result.data && result.data.quiz) {
+          setEssayContent(result.data.quiz.quizQuestion);
+          setPrompt(result.data.quiz.prompt);
           setTimerDuration(parseInt(result.data.remainingTime, 10) || 0); // Ensure valid number
           sessionStorage.setItem("timer1", result.data.remainingTime);
           setAnswer(result.data.answer);
-          setEnded(result.data.ended);
+        } else if (result && result.data && result.data.errorMessage) {
+          setPageError(result.data.errorMessage);
         }
+        else
+        {
+          setEnded(true)
+        }
+       
       } catch (error) {
-        navigate("/");
+        // Handle the error
       }
     };
 
     getQuestion();
-  }, [navigate]);
+    
 
-  const saveAnswer = async (text, ended) => {
+  }, [navigate]);
+  const saveAnswer = async (text,verbatimFlagged, ended) => {
     setSaving(true);
     const token = sessionStorage.getItem("token");
     const headers = { Authorization: `Bearer ${token}` };
@@ -56,7 +62,7 @@ const WriteEssayPage = () => {
         answer: text,
         remainingTime: remainingTime,
         ended: ended,
-        questionNumber: 1
+        verbatimFlagged:verbatimFlagged
       }, { headers });
       return result;
     } catch (error) {
@@ -66,28 +72,20 @@ const WriteEssayPage = () => {
     }
   };
 
-  const handleOnSubmit = async (text) => {
-    const result = window.confirm("Are you sure you want to submit the answer?");
-    if (result) {
+  const handleOnSubmit = async (text,verbatimFlagged) => {
       setSubmitting(true);
       try {
-        await saveAnswer(text, true).then(() => 
-          
-          {
-            sessionStorage.removeItem("timer1");
-
-            navigate("/essay-2")});
+        await saveAnswer(text,verbatimFlagged, true).then(() => navigate("/summary"));
       } finally {
         setSubmitting(false);
       }
-    }
+    
   };
 
-  const handleSave = async (text) => {
+  const handleSave = async (text,verbatimFlagged) => {
     setSaving(true);
     try {
-      await saveAnswer(text, false);
-      console.log("Answer saved successfully");
+      await saveAnswer(text,verbatimFlagged, false);
     } catch (error) {
       navigate("/");
     } finally {
@@ -120,9 +118,21 @@ const WriteEssayPage = () => {
     );
   }
 
+  if (pageError) {
+    return (
+      <NavigatePage 
+        title="Oops"
+        message={pageError}
+        goToPath="/"
+        buttonText="Go home"
+      />
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
+      
       <div className="flex flex-grow overflow-hidden">
         {/* First Column - Essay Content */}
         <div className="w-1/2 p-4 border-r border-gray-300 bg-yellow-100 flex flex-col">
@@ -138,39 +148,36 @@ const WriteEssayPage = () => {
             ))}
           </div>
         </div>
-  
+
         {/* Second Column - Writing Area */}
         <div className="w-1/2 p-4 flex flex-col">
-          {/* Saving Indicator */}
-          {saving && (
-            <div className="bg-gray-800 text-white text-xs p-2 mb-4 border border-gray-700 rounded-lg shadow-sm">
-              Saving...
-            </div>
-          )}
-  
           <div className="text-center mb-6">
             <div className="bg-blue-100 text-blue-800 p-4 border border-blue-300 rounded-lg mb-6" style={{ fontSize: '0.875rem' }}>
               <ol className="list-decimal list-inside">
-                <li>Read the passage and write a five-paragraph essay:</li>
-                <ol className="list-decimal list-inside ml-4">
-                  <li>Summarize the article (two or three paragraphs).</li>
-                  <li>Share your perspective about the relationship between outlook and longevity.</li>
-                </ol>
-                <li>Use details from the information you are given when you write your explanation.</li>
-                <li>Do NOT copy more than THREE words.</li>
-              </ol>
+                <li>Read the passage and summarize the below(Ideally 150-200 words):</li>
+                <p>Some people believe that global warming is damaging our planet. Others believe that global warming is not a serious problem. Which point of view do you agree with? Why?</p>
+
+                  <p>Give reasons and support your writing with examples.</p>
+            </ol>
             </div>
             <div>
-              {timerDuration && <Timer name="timer1" duration={timerDuration} onTimeUp={handleTimeUp} />}
+              {timerDuration && <Timer name="timer2" duration={timerDuration} onTimeUp={handleTimeUp} />}
             </div>
           </div>
-          {timerDuration && <TextEditor ref={editorRef} refText={essayContent} onSave={handleSave} onSubmit={handleOnSubmit} userGroup={userGroup} initialvalue={answer} />}
+
+          {/* Saving/Submit Spinner - On Top of TextEditor */}
+          {(saving || submitting) && (
+            <div className="flex justify-center items-center mb-4">
+              <ClipLoader color="#0000ff" loading={saving || submitting} size={30} />
+              <span className="ml-2 text-lg">{submitting ? "Submitting..." : "Saving..."}</span>
+            </div>
+          )}
+
+          {<TextEditor ref={editorRef} initialvalue={answer} refText={essayContent} onSave={handleSave} onSubmit={handleOnSubmit}  />}
         </div>
       </div>
     </div>
   );
-  
-  
 };
 
 export default WriteEssayPage;

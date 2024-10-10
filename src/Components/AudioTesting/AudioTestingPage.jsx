@@ -3,12 +3,17 @@ import ReactAudioPlayer from 'react-audio-player';
 import { useNavigate } from 'react-router-dom';
 import { useLoaderData } from 'react-router-dom';
 import NavigatePage from '../NavigatePage/NavigatePage';
+
 const AudioTestPage = () => {
   const [hasAgreed, setHasAgreed] = useState(false);
   const navigate=useNavigate()
 
   const loaderData=useLoaderData()
-
+  if(loaderData && loaderData.data && loaderData.data.errorMessage)
+    {
+      return <NavigatePage navbar={false}buttonText="Back to login" message={loaderData.data.errorMessage} title="Oops!!"  goToPath="/"></NavigatePage>
+  
+    }
   if((!loaderData)||(!loaderData.data.message))
   {
     
@@ -17,13 +22,11 @@ const AudioTestPage = () => {
 
 
   const handleNext = () => {
-    const answer= window.confirm("Are you sure you want to start the test?")
-    if(answer)
-    {
+  
      navigate("/test-instructions")
  
  
-   };
+  
 
    }
   return (
@@ -41,7 +44,8 @@ const AudioTestPage = () => {
         
         {/* React Audio Player */}
         <ReactAudioPlayer
-          src="/path/to/your/test-audio.mp3"
+    // src={process.env.PUBLIC_URL + '/test.mp3'}
+
           controls
           volume={0.5} // Initial volume set to 50%
           style={{ marginBottom: '24px' }}

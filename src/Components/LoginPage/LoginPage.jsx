@@ -23,6 +23,7 @@ const LoginPage = () => {
 
   const navigate=useNavigate()
 
+
   useEffect(()=>{  
     sessionStorage.clear();
   },[])
@@ -43,16 +44,20 @@ const LoginPage = () => {
         email: email,
         quizCode: quizCode,
       };
-      const result = await axios.post(`${BASE_URL}/user/validate-user`, body);
-      console.log("The result is",result)
-      if (  result.data.token) {
+      const result = await axios.post(`${BASE_URL}/user/login`, body);
+      if (  result&& result.data&&result.data.token) {
 
         sessionStorage.setItem("token",result.data.token)
+        // const ipcRenderer=window.ipcRenderer
+        // ipcRenderer.send('sessionStorage',sessionStorage.getItem("token"))
+
         sessionStorage.setItem("group",result.data.group)
         navigate('/welcome')
       }
 
-    } catch (error) {
+    } 
+    
+    catch (error) {
 
      
      if(error.response)
@@ -61,6 +66,11 @@ const LoginPage = () => {
       setLoading(false);
 
 
+     }
+     else
+     {
+      setLoginError("An error occured while reaching server, Please contact admin.")
+      setLoading(false)
      }
 
     } finally {
