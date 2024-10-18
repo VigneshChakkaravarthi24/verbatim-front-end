@@ -54,7 +54,7 @@ const EssayPage = () => {
     <div className="w-1/2 p-4 flex flex-col items-center justify-start">
       <div className="text-center">
         <h2 className="text-xl font-bold mb-4">Give yourself 3 minutes to read this essay.</h2>
-        <Timer initialTime={10} onTimeUp={handleTimeUp} />
+        <Timer initialTime={180} onTimeUp={handleTimeUp} />
         <button
           onClick={handleNext}
           className="bg-yellow-300 text-brown-600 p-3 rounded-lg"
