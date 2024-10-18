@@ -17,8 +17,8 @@ const TextEditor = forwardRef(({ refText, onSave, onSubmit, userGroup }, ref) =>
     },
   }));
 
-  console.log("The verbatim flagged words are ",verbatimFlaggedWords)
-
+  const uniqueFlaggedWords = [...new Set(verbatimFlaggedWords.map(word => word.trim().toLowerCase()))];
+  console.log("The verbatim flagged words are", uniqueFlaggedWords);
   const wordCount = (text) => {
     return text.split(/\s+/).filter(Boolean).length; // Count words
   };

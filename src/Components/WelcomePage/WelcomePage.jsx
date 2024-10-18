@@ -22,13 +22,13 @@ const navigate=useNavigate()
 
   if(loaderData && loaderData.data && loaderData.data.errorMessage)
   {
-    return <NavigatePage buttonText="Back to login" message={loaderData.data.errorMessage} title="Oops!!"  goToPath="/"></NavigatePage>
+    return <NavigatePage   navbar ={false} buttonText="Back to login" message={loaderData.data.errorMessage} title="Oops!!"  goToPath="/"></NavigatePage>
 
   }
   if((!loaderData)||(!loaderData.data.message))
   {
     
-    return <NavigatePage buttonText="Back to login" message="You might be logged out. Please login again" title="Oops!!"  goToPath="/"></NavigatePage>
+    return <NavigatePage navbar ={false}  buttonText="Back to login" message="You might be logged out. Please login again" title="Oops!!"  goToPath="/" ></NavigatePage>
   }
   
   return (
@@ -66,6 +66,7 @@ export async function loader(){
     const token=sessionStorage.getItem("token")
     let headers= {'Authorization': `Bearer ${token}`}
     const result = await axios.get(`${BASE_URL}/user/authenticate-loader`,{headers})
+  
     if(result.data.errorMessage || result.data.message)
         {
             return result
