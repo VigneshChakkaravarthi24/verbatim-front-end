@@ -6,12 +6,15 @@ const ErrorPage = () => {
   const navigate = useNavigate();
 const routerError = useRouteError()
 const error =JSON.parse(routerError.data)
-let title = error.title
-let message=error.message
-let goToPath=error.goToPath
-let buttonText=error.buttonText
-let navbar = error.navBar
-console.log("The value of error is",error)
+
+  const title = error.title
+  const message=error.message
+  const goToPath=error.goToPath
+  const buttonText=error.buttonText
+  const navbar = error.navBar
+
+
+
   const handleGoToPath = () => {
     navigate(goToPath);
   };

@@ -59,11 +59,11 @@ const TestInstructionsPage = () => {
         <div className="w-full max-w-lg bg-gray-100 border border-gray-300 p-6 rounded-lg shadow-lg">
           <h1 className="text-2xl font-bold text-brown-300">Instructions</h1>
           <p className="mt-4 text-left">
-            Writing Based on Reading and Listening Directions
+            This is a writing test.
           </p>
           <ul className={`mt-4 ${sharedClasses.list}`}>
             <li>For this task, you will have 3 minutes to read a passage about an academic topic.</li>
-            <li>Then you will listen to a lecture about the same topic.</li>
+            <li>You may take short notes on a piece of paper.</li>
             <li>You will have 20 minutes to write a detailed summary of the lecture.</li>
             <li>Explain how the lecture relates to the reading passage.</li>
             <li>While you write, you will be able to see the reading passage. Your notes will not be scored.</li>

@@ -122,9 +122,9 @@ const TextEditor = forwardRef(({ refText, onSave, onSubmit, userGroup }, ref) =>
     if (e.key === 'ContextMenu') {
       e.preventDefault();
     }
-    if (e.key === "Enter") {
-      e.preventDefault(); // Prevents the new line from being added
-    }
+    // if (e.key === "Enter") {
+    //   e.preventDefault(); // Prevents the new line from being added
+    // }
   };
 
   const onContextMenu = (e) => {

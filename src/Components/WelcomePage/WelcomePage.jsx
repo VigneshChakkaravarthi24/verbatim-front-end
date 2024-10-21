@@ -40,7 +40,7 @@ const navigate=useNavigate()
             <li>Explore the features of the application.</li>
             <li>Get familiar with the user interface.</li>
             <li>Ensure you have a stable internet connection.</li>
-            <li>Check out the documentation for help.</li>
+            <li style={{ color: 'red' }}>You cannot switch applications. If so will lead to forfeiting your exam.</li>
             <li>Enjoy your experience!</li>
           </ul>
           <button
